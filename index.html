@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Perfil · Trading Pro Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --or:#FF6726;--ord:rgba(255,103,38,.10);--orb:rgba(255,103,38,.30);
+  --c0:#000;--c1:#0E0E0E;--c2:#141414;--c3:#242424;
+  --ln:rgba(255,255,255,.07);--w:#fff;--g:#888;--gl:#BBBBBB;
+  --red:#E03C3C;--grn:#2ECC71;--yel:#F5A623;
+}
+html{scroll-behavior:smooth}
+body{background:var(--c1);color:var(--w);font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;position:relative;overflow:hidden}
+#hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(255,103,38,.08) 0%,transparent 70%);pointer-events:none}
+.ey{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--or);margin-bottom:20px;opacity:0;animation:fu .6s ease .1s forwards}
+.ht{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,16vw,160px);line-height:.9;text-align:center;color:var(--w);opacity:0;animation:fu .6s ease .2s forwards}
+.ht span{color:var(--or)}
+.hs{font-size:clamp(15px,2.5vw,19px);font-weight:300;color:var(--gl);text-align:center;max-width:560px;margin:24px auto 0;opacity:0;animation:fu .6s ease .35s forwards}
+.hdiv{width:1px;height:48px;background:linear-gradient(to bottom,var(--or),transparent);margin:40px auto;opacity:0;animation:fu .5s ease .45s forwards}
+.hm{max-width:620px;text-align:center;opacity:0;animation:fu .6s ease .5s forwards}
+.hm p{color:var(--gl);font-size:15px;line-height:1.8;margin-bottom:12px}
+.hm p strong{color:var(--w);font-weight:600}
+.sline{display:inline-flex;align-items:center;gap:10px;background:var(--ord);border:1px solid var(--orb);border-radius:4px;padding:10px 20px;margin:20px 0;font-size:14px;color:var(--or);font-weight:600}
+.chk{list-style:none;text-align:left;display:inline-block;margin:20px 0}
+.chk li{color:var(--gl);font-size:14px;padding:5px 0;display:flex;align-items:center;gap:10px}
+.chk li::before{content:'';width:6px;height:6px;background:var(--or);border-radius:50%;flex-shrink:0}
+.dnote{font-size:12px;color:var(--g);letter-spacing:.1em;text-transform:uppercase;margin-top:16px}
+.btnp{display:inline-flex;align-items:center;gap:10px;background:var(--or);color:var(--c0);font-family:'Inter',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;padding:18px 40px;border:none;cursor:pointer;margin-top:40px;transition:background .2s,transform .15s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);opacity:0;animation:fu .6s ease .7s forwards}
+.btnp:hover{background:#ff7f45;transform:translateY(-2px)}
+#qs{display:none;min-height:100vh;padding:40px 24px 80px}
+.qwrap{max-width:700px;margin:0 auto}
+.pbw{position:sticky;top:0;z-index:100;background:var(--c1);padding:16px 0 20px;margin-bottom:40px;border-bottom:1px solid var(--ln)}
+.pmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.plbl{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--or)}
+.ppct{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--w)}
+.ptr{height:3px;background:var(--c3);border-radius:2px;overflow:hidden}
+.pfill{height:100%;background:var(--or);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
+.qc{display:none;animation:si .4s ease forwards}
+.qc.active{display:block}
+.qbtag{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.qnum{font-size:11px;color:var(--g);letter-spacing:.1em;margin-bottom:16px}
+.qt{font-size:clamp(17px,3.5vw,23px);font-weight:600;color:var(--w);line-height:1.4;margin-bottom:28px}
+.qnote{font-size:13px;color:var(--or);background:var(--ord);border:1px solid var(--orb);border-radius:3px;padding:10px 14px;margin-bottom:20px;line-height:1.5}
+.ol{display:flex;flex-direction:column;gap:12px}
+.ob{background:var(--c2);border:1px solid var(--ln);color:var(--gl);font-family:'Inter',sans-serif;font-size:14px;text-align:left;padding:16px 20px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:14px;line-height:1.5;border-radius:2px}
+.ol2{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--c3);flex-shrink:0;line-height:1.2;transition:color .2s;min-width:16px}
+.ob:hover{border-color:var(--orb);background:var(--ord);color:var(--w)}
+.ob:hover .ol2,.ob.sel .ol2{color:var(--or)}
+.ob.sel{border-color:var(--or);background:var(--ord);color:var(--w)}
+.mhint{font-size:11px;color:var(--g);margin-bottom:16px}
+.ta{width:100%;background:var(--c2);border:1px solid var(--ln);color:var(--w);font-family:'Inter',sans-serif;font-size:15px;padding:16px 20px;resize:vertical;min-height:120px;border-radius:2px;outline:none;transition:border-color .2s;line-height:1.6}
+.ta:focus{border-color:var(--orb)}
+.ta::placeholder{color:var(--g)}
+.cc{font-size:11px;color:var(--g);text-align:right;margin-top:6px}
+.cc.ok{color:var(--grn)}
+.qnav{display:flex;justify-content:flex-end;margin-top:32px}
+.bn{background:var(--or);color:var(--c0);font-family:'Inter',sans-serif;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;padding:14px 32px;border:none;cursor:pointer;transition:all .2s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);opacity:.3;pointer-events:none}
+.bn.on{opacity:1;pointer-events:auto}
+.bn.on:hover{background:#ff7f45;transform:translateY(-1px)}
+.cb{display:none;margin-top:24px;padding:20px;border-left:2px solid var(--or);background:var(--c2);border-radius:0 2px 2px 0}
+.cb.vis{display:block;animation:si .3s ease forwards}
+.clbl{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:10px}
+.cq{font-size:15px;font-weight:600;color:var(--w);margin-bottom:16px;line-height:1.4}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.25em;color:var(--g);text-align:center;margin-bottom:48px}
+.logo span{color:var(--or)}
+#rs{display:none;padding:60px 24px 100px}
+.rwrap{max-width:760px;margin:0 auto}
+.rey{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--or);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.rey::after{content:'';flex:1;height:1px;background:var(--ln)}
+.rtit{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,8vw,72px);line-height:1;margin-bottom:8px}
+.rtit.red{color:var(--red)}.rtit.yel{color:var(--yel)}.rtit.grn{color:var(--or)}
+.rbadge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:5px 14px;border-radius:2px;margin-bottom:28px}
+.rbadge.red{background:rgba(224,60,60,.15);color:var(--red);border:1px solid rgba(224,60,60,.3)}
+.rbadge.yel{background:rgba(245,166,35,.12);color:var(--yel);border:1px solid rgba(245,166,35,.3)}
+.rbadge.grn{background:var(--ord);color:var(--or);border:1px solid var(--orb)}
+.mpanel,.ppanel{background:var(--c2);border:1px solid var(--ln);border-radius:4px;padding:28px;margin:24px 0}
+.ptit{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g);margin-bottom:24px}
+.mr{margin-bottom:20px}.mr:last-child{margin-bottom:0}
+.mh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.mn{font-size:13px;font-weight:600;color:var(--w)}
+.ms{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--or)}
+.mtr{height:4px;background:var(--c3);border-radius:2px;overflow:hidden}
+.mf{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0%}
+.mf.or{background:var(--or)}.mf.rd{background:var(--red)}.mf.yl{background:var(--yel)}
+.pi{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--ln)}
+.pi:last-child{border-bottom:none}
+.pd{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;background:var(--or)}
+.pd.r{background:var(--red)}
+.ptxt{font-size:14px;color:var(--gl);line-height:1.55}
+.ptxt strong{color:var(--w);display:block;margin-bottom:3px;font-size:13px}
+.ptxt .fix{font-size:12px;color:var(--or);margin-top:5px;font-weight:600}
+.rmsg{font-size:15px;color:var(--gl);line-height:1.85;margin-bottom:32px;border-left:2px solid var(--or);padding-left:20px}
+.rmsg p{margin-bottom:10px}.rmsg p:last-child{margin-bottom:0}
+.rdsec{margin:40px 0}
+.rdtit{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--g);margin-bottom:24px;display:flex;align-items:center;gap:10px}
+.rdtit::after{content:'';flex:1;height:1px;background:var(--ln)}
+.rdph{display:flex;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--c3) transparent}
+.ph{flex:1;min-width:120px;background:var(--c2);border:1px solid var(--ln);padding:16px 14px;position:relative}
+.ph:not(:last-child)::after{content:'→';position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:var(--g);font-size:12px;z-index:2;background:var(--c1);padding:0 2px}
+.ph.act{border-color:var(--or);background:var(--ord)}
+.ph.dn{opacity:.3}
+.phn{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--c3);line-height:1;margin-bottom:6px}
+.ph.act .phn{color:var(--or)}
+.phname{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gl);margin-bottom:6px}
+.ph.act .phname{color:var(--w)}
+.phq{font-size:10px;color:var(--g);line-height:1.4}
+.ph.act .phq{color:var(--gl)}
+.phr{font-size:10px;font-weight:600;color:var(--or);margin-top:8px;display:none}
+.ph.act .phr{display:block}
+.apnote{margin-top:16px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--gl);flex-wrap:wrap}
+.adot{width:8px;height:8px;background:var(--or);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+.ctab{background:var(--c2);border:1px solid var(--orb);padding:36px;margin-top:40px;border-radius:2px;position:relative;overflow:hidden}
+.ctab::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--or)}
+.ctag{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:12px}
+.cph{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,4vw,34px);color:var(--w);line-height:1.15;margin-bottom:10px}
+.cph span{color:var(--or)}
+.csub{font-size:14px;color:var(--gl);margin-bottom:28px;line-height:1.7}
+.csub strong{color:var(--w)}
+.bwa{display:inline-flex;align-items:center;gap:12px;background:#25D366;color:#000;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;padding:18px 36px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.bwa:hover{background:#1fb358;transform:translateY(-2px)}
+.bwa svg{width:20px;height:20px;flex-shrink:0}
+.bo{display:inline-flex;align-items:center;background:transparent;color:var(--gl);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:16px 28px;border:1px solid var(--ln);cursor:pointer;text-decoration:none;transition:all .2s}
+.bo:hover{border-color:var(--g);color:var(--w)}
+.ctabs{display:flex;gap:12px;flex-wrap:wrap}
+.rnote{text-align:center;margin-top:48px;padding-top:32px;border-top:1px solid var(--ln)}
+.rbtn{background:none;border:none;color:var(--g);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px;transition:color .2s}
+.rbtn:hover{color:var(--w)}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes si{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media(max-width:600px){.ph{min-width:95px;padding:12px 8px}.ph:not(:last-child)::after{right:-11px}.ctabs{flex-direction:column}.bwa,.bo{width:100%;justify-content:center}}
+</style>
+</head>
+<body>
+
+<section id="hero">
+  <p class="ey">Trading Pro Lab · @williamstrader_</p>
+  <h1 class="ht">DIAG<span>NÓS</span>TICO</h1>
+  <p class="hs">Descubre si realmente tienes el perfil para convertirte en un trader profesional.</p>
+  <div class="hdiv"></div>
+  <div class="hm">
+    <p>No todas las personas deberían dedicarse al trading.</p>
+    <p>No busco llenarme de alumnos. <strong>Busco traders que lleguen a retirar.</strong></p>
+    <p>Este diagnóstico analiza cada aspecto que separa a un trader rentable de uno que sigue perdiendo.</p>
+    <div class="sline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      +85% de alumnos activos ya realizan retiros
+    </div>
+    <ul class="chk">
+      <li>Experiencia, nivel real y capital quemado</li>
+      <li>Gestión de riesgo, capital y tamaño de posición</li>
+      <li>Fondeo — si sabes operar en prop firms</li>
+      <li>Psicología, control emocional y mindset post-pérdida</li>
+      <li>Plan de trading, backtesting y metodología</li>
+      <li>Sesiones, activos y horarios correctos</li>
+    </ul>
+    <p style="margin-top:16px">Al finalizar recibirás un <strong>diagnóstico completo</strong> con estadísticas por área, puntos a mejorar, qué fase del Sistema TPL los resuelve y el camino correcto para ti.</p>
+    <p class="dnote">⏱ Duración aproximada: 8 minutos</p>
+  </div>
+  <button class="btnp" onclick="startQ()">
+    Comenzar diagnóstico
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </button>
+</section>
+
+<section id="qs">
+<div class="qwrap">
+  <div class="logo">TRADING <span>PRO</span> LAB</div>
+  <div class="pbw">
+    <div class="pmeta"><span class="plbl">Diagnóstico en progreso</span><span class="ppct" id="pct">0%</span></div>
+    <div class="ptr"><div class="pfill" id="pf"></div></div>
+  </div>
+
+  <div class="qc active" id="q1"><p class="qbtag">Bloque 1 · Experiencia</p><p class="qnum">Pregunta 1 de 32</p>
+    <p class="qt">¿Cuánto tiempo llevas en el mundo del trading?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q1','A',['q1c'])"><span class="ol2">A</span>Nunca he operado, apenas estoy explorando</button>
+      <button class="ob" onclick="sel(this,'q1','B',[])"><span class="ol2">B</span>Menos de 6 meses</button>
+      <button class="ob" onclick="sel(this,'q1','C',[])"><span class="ol2">C</span>Entre 6 meses y 2 años</button>
+      <button class="ob" onclick="sel(this,'q1','D',[])"><span class="ol2">D</span>Más de 2 años</button>
+    </div>
+    <div class="cb" id="q1c"><p class="clbl">Cuéntanos</p><p class="cq">¿Qué te llevó a interesarte en el trading ahora?</p>
+      <textarea class="ta" id="q1ct" placeholder="Sé honesto..." oninput="cta('q1ct','q1cc',20,'q1')"></textarea><p class="cc" id="q1cc">Mínimo 20 caracteres</p>
+    </div>
+    <div class="qnav"><button class="bn" id="q1-next" onclick="go('q1','q2')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q2"><p class="qbtag">Bloque 1 · Experiencia</p><p class="qnum">Pregunta 2 de 32</p>
+    <p class="qt">¿Con qué tipo de cuenta has operado?</p><p class="mhint">Puedes marcar más de una</p>
+    <div class="ol">
+      <button class="ob multi" onclick="mul(this,'q2','C',['q2c'])"><span class="ol2">A</span>Solo cuenta demo</button>
+      <button class="ob multi" onclick="mul(this,'q2','C',['q2c'])"><span class="ol2">B</span>Cuenta real con capital propio</button>
+      <button class="ob multi" data-val="C" onclick="mul(this,'q2','C',['q2c'])"><span class="ol2">C</span>Cuenta de fondeo (prop firm)</button>
+      <button class="ob multi" onclick="mul(this,'q2','C',['q2c'])"><span class="ol2">D</span>Nunca he operado en ninguna cuenta</button>
+    </div>
+    <div class="cb" id="q2c"><p class="clbl">Sobre fondeo</p><p class="cq">¿Has logrado pasar algún desafío o tienes cuenta financiada activa?</p>
+      <div class="ol">
+        <button class="ob" onclick="sub(this,'q2')"><span class="ol2">A</span>Sí, tengo cuentas activas y he pasado desafíos</button>
+        <button class="ob" onclick="sub(this,'q2')"><span class="ol2">B</span>He intentado pero los he perdido</button>
+        <button class="ob" onclick="sub(this,'q2')"><span class="ol2">C</span>Estoy en proceso de un desafío ahora mismo</button>
+        <button class="ob" onclick="sub(this,'q2')"><span class="ol2">D</span>Solo conozco el modelo pero nunca he participado</button>
+      </div>
+    </div>
+    <div class="qnav"><button class="bn" id="q2-next" onclick="go('q2','q3')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q3"><p class="qbtag">Bloque 1 · Experiencia</p><p class="qnum">Pregunta 3 de 32</p>
+    <p class="qt">Siendo honesto contigo mismo, ¿cuál es tu nivel real como trader hoy?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q3','A',[])"><span class="ol2">A</span>Sin conocimiento — no entiendo los conceptos básicos</button>
+      <button class="ob" onclick="sel(this,'q3','B',[])"><span class="ol2">B</span>Leve conocimiento — entiendo términos pero sin estrategia</button>
+      <button class="ob" onclick="sel(this,'q3','C',[])"><span class="ol2">C</span>Intermedio — tengo metodología pero sin resultados consistentes</button>
+      <button class="ob" onclick="sel(this,'q3','D',[])"><span class="ol2">D</span>Avanzado — opero con sistema definido y busco mejorar</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q3-next" onclick="go('q3','q4')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q4"><p class="qbtag">Bloque 1 · Experiencia</p><p class="qnum">Pregunta 4 de 32</p>
+    <p class="qt">¿Cuánto capital has perdido en trading de forma acumulada?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q4','A',[])"><span class="ol2">A</span>Nada — no he arriesgado dinero real</button>
+      <button class="ob" onclick="sel(this,'q4','B',[])"><span class="ol2">B</span>Menos de $500</button>
+      <button class="ob" onclick="sel(this,'q4','C',['q4c'])"><span class="ol2">C</span>Entre $500 y $2,000</button>
+      <button class="ob" onclick="sel(this,'q4','D',['q4c'])"><span class="ol2">D</span>Más de $2,000</button>
+      <button class="ob" onclick="sel(this,'q4','E',[])"><span class="ol2">E</span>Prefiero no decirlo</button>
+    </div>
+    <div class="cb" id="q4c"><p class="clbl">Queremos entenderte</p><p class="cq">¿A qué le atribuyes esas pérdidas? (puedes marcar varias)</p>
+      <div class="ol">
+        <button class="ob multi" onclick="mul(this,'q4s',null,[])"><span class="ol2">A</span>Falta de conocimiento y educación</button>
+        <button class="ob multi" onclick="mul(this,'q4s',null,[])"><span class="ol2">B</span>Manejo de riesgo deficiente</button>
+        <button class="ob multi" onclick="mul(this,'q4s',null,[])"><span class="ol2">C</span>Emociones al operar (miedo, avaricia, FOMO)</button>
+        <button class="ob multi" onclick="mul(this,'q4s',null,[])"><span class="ol2">D</span>Seguir señales sin entender el porqué</button>
+        <button class="ob multi" onclick="mul(this,'q4s',null,[])"><span class="ol2">E</span>Mala gestión del capital</button>
+        <button class="ob multi" onclick="mul(this,'q4s',null,[])"><span class="ol2">F</span>Todas las anteriores</button>
+      </div>
+    </div>
+    <div class="qnav"><button class="bn" id="q4-next" onclick="go('q4','q5')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q5"><p class="qbtag">Bloque 2 · Psicología</p><p class="qnum">Pregunta 5 de 32</p>
+    <p class="qt">Cuando tienes una operación abierta en pérdida, ¿qué sueles hacer?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q5','A',[])"><span class="ol2">A</span>Respeto mi stop loss y cierro sin problema</button>
+      <button class="ob" onclick="sel(this,'q5','B',[])"><span class="ol2">B</span>Me cuesta pero generalmente lo respeto</button>
+      <button class="ob" onclick="sel(this,'q5','C',[])"><span class="ol2">C</span>Muevo el stop o espero que el precio regrese</button>
+      <button class="ob" onclick="sel(this,'q5','D',[])"><span class="ol2">D</span>Cierro antes de que llegue al stop por miedo</button>
+      <button class="ob" onclick="sel(this,'q5','E',[])"><span class="ol2">E</span>Nunca he operado con stop loss definido</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q5-next" onclick="go('q5','q6')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q6"><p class="qbtag">Bloque 2 · Psicología</p><p class="qnum">Pregunta 6 de 32</p>
+    <p class="qt">Después de cerrar una operación en pérdida, ¿qué haces normalmente?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q6','A',[])"><span class="ol2">A</span>Anoto lo que pasó, acepto la pérdida y espero la siguiente setup</button>
+      <button class="ob" onclick="sel(this,'q6','B',[])"><span class="ol2">B</span>Me tomo un descanso y vuelvo con la mente fría</button>
+      <button class="ob" onclick="sel(this,'q6','C',[])"><span class="ol2">C</span>Abro otra operación rápido para intentar recuperar</button>
+      <button class="ob" onclick="sel(this,'q6','D',[])"><span class="ol2">D</span>Opero más seguido y con más tamaño para recuperar lo perdido</button>
+      <button class="ob" onclick="sel(this,'q6','E',[])"><span class="ol2">E</span>Me bloqueo y la pérdida me afecta emocionalmente durante días</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q6-next" onclick="go('q6','q7')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q7"><p class="qbtag">Bloque 2 · Psicología</p><p class="qnum">Pregunta 7 de 32</p>
+    <p class="qt">Cuando no ves resultados positivos durante una semana de trading, ¿qué suele pasarte mentalmente?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q7','A',[])"><span class="ol2">A</span>Lo proceso con calma — las pérdidas son parte del proceso</button>
+      <button class="ob" onclick="sel(this,'q7','B',[])"><span class="ol2">B</span>Me frustra pero sigo operando con el mismo sistema</button>
+      <button class="ob" onclick="sel(this,'q7','C',[])"><span class="ol2">C</span>Me genera ansiedad y empiezo a operar diferente para recuperar</button>
+      <button class="ob" onclick="sel(this,'q7','D',[])"><span class="ol2">D</span>Me paralizo o abandono el trading por un tiempo</button>
+      <button class="ob" onclick="sel(this,'q7','E',[])"><span class="ol2">E</span>Busco una nueva estrategia o mentor que sí funcione</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q7-next" onclick="go('q7','q8')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q8"><p class="qbtag">Bloque 3 · Gestión de Riesgo</p><p class="qnum">Pregunta 8 de 32</p>
+    <p class="qt">¿Tienes una regla de gestión de riesgo definida por operación?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q8','A',[])"><span class="ol2">A</span>Sí — arriesgo un % fijo por trade y lo respeto siempre</button>
+      <button class="ob" onclick="sel(this,'q8','B',[])"><span class="ol2">B</span>Tengo una regla pero no siempre la respeto</button>
+      <button class="ob" onclick="sel(this,'q8','C',[])"><span class="ol2">C</span>No tengo regla fija — opero según lo que siento en el momento</button>
+      <button class="ob" onclick="sel(this,'q8','D',[])"><span class="ol2">D</span>No sé cómo calcular el riesgo por operación</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q8-next" onclick="go('q8','q9')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q9"><p class="qbtag">Bloque 3 · Gestión de Riesgo</p><p class="qnum">Pregunta 9 de 32</p>
+    <p class="qt">¿Sabes calcular el tamaño correcto de tu posición (lotes) en función de tu capital y tu stop loss antes de entrar?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q9','A',[])"><span class="ol2">A</span>Sí — calculo el lote exacto para cada operación antes de entrar</button>
+      <button class="ob" onclick="sel(this,'q9','B',[])"><span class="ol2">B</span>Lo calculo a veces pero no siempre</button>
+      <button class="ob" onclick="sel(this,'q9','C',[])"><span class="ol2">C</span>Uso siempre el mismo lote sin calcularlo</button>
+      <button class="ob" onclick="sel(this,'q9','D',[])"><span class="ol2">D</span>No sé cómo calcular lotes ni por qué importa</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q9-next" onclick="go('q9','q10')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q10"><p class="qbtag">Bloque 3 · Gestión de Riesgo</p><p class="qnum">Pregunta 10 de 32</p>
+    <p class="qt">¿Entiendes cómo funciona el apalancamiento y cómo afecta tu riesgo real por operación?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q10','A',[])"><span class="ol2">A</span>Sí — lo entiendo perfectamente y lo gestiono de forma consciente</button>
+      <button class="ob" onclick="sel(this,'q10','B',[])"><span class="ol2">B</span>Entiendo el concepto pero no lo controlo del todo en la práctica</button>
+      <button class="ob" onclick="sel(this,'q10','C',[])"><span class="ol2">C</span>Lo entiendo superficialmente pero no lo aplico bien</button>
+      <button class="ob" onclick="sel(this,'q10','D',[])"><span class="ol2">D</span>No entiendo cómo funciona el apalancamiento</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q10-next" onclick="go('q10','q11')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q11"><p class="qbtag">Bloque 4 · Fondeo y Prop Firms</p><p class="qnum">Pregunta 11 de 32</p>
+    <p class="qt">¿Conoces y entiendes las reglas típicas de una cuenta de fondeo (drawdown diario, drawdown total, objetivo de profit)?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q11','A',[])"><span class="ol2">A</span>Sí — las entiendo y adapto mi gestión de riesgo a ellas</button>
+      <button class="ob" onclick="sel(this,'q11','B',[])"><span class="ol2">B</span>Las conozco pero no siempre las tengo presentes al operar</button>
+      <button class="ob" onclick="sel(this,'q11','C',[])"><span class="ol2">C</span>Las conozco superficialmente pero no las entiendo del todo</button>
+      <button class="ob" onclick="sel(this,'q11','D',[])"><span class="ol2">D</span>No conozco las reglas de las cuentas de fondeo</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q11-next" onclick="go('q11','q12')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q12"><p class="qbtag">Bloque 4 · Fondeo y Prop Firms</p><p class="qnum">Pregunta 12 de 32</p>
+    <p class="qt">Si tuvieras una cuenta de fondeo activa hoy, ¿sabes cómo operarla para llegar al payout sin perderla?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q12','A',[])"><span class="ol2">A</span>Sí — tengo claro el proceso: gestión conservadora, consistencia y payout</button>
+      <button class="ob" onclick="sel(this,'q12','B',[])"><span class="ol2">B</span>Más o menos — conozco el proceso pero me falta experiencia práctica</button>
+      <button class="ob" onclick="sel(this,'q12','C',[])"><span class="ol2">C</span>No del todo — me falta entender cómo llegar al payout sin romper reglas</button>
+      <button class="ob" onclick="sel(this,'q12','D',[])"><span class="ol2">D</span>No sé cómo funciona el proceso de payout en fondeo</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q12-next" onclick="go('q12','q13')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q13"><p class="qbtag">Bloque 5 · Plan y Metodología</p><p class="qnum">Pregunta 13 de 32</p>
+    <p class="qt">¿Tienes un plan de trading escrito con reglas claras de entrada, salida, gestión de riesgo y horarios?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q13','A',[])"><span class="ol2">A</span>Sí — tengo un plan escrito y lo sigo con disciplina</button>
+      <button class="ob" onclick="sel(this,'q13','B',[])"><span class="ol2">B</span>Tengo un plan en mente pero no está escrito ni formalizado</button>
+      <button class="ob" onclick="sel(this,'q13','C',[])"><span class="ol2">C</span>Tengo algunas reglas sueltas pero no es un plan completo</button>
+      <button class="ob" onclick="sel(this,'q13','D',[])"><span class="ol2">D</span>No tengo plan — opero según lo que veo en el momento</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q13-next" onclick="go('q13','q14')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q14"><p class="qbtag">Bloque 5 · Plan y Metodología</p><p class="qnum">Pregunta 14 de 32</p>
+    <p class="qt">Cuando analizas el mercado para entrar a una operación, ¿en qué te basas principalmente?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q14','A',[])"><span class="ol2">A</span>Tengo un sistema propio con reglas objetivas y claras</button>
+      <button class="ob" onclick="sel(this,'q14','B',[])"><span class="ol2">B</span>Uso indicadores técnicos pero sin reglas fijas</button>
+      <button class="ob" onclick="sel(this,'q14','C',[])"><span class="ol2">C</span>Sigo señales de otros traders o grupos</button>
+      <button class="ob" onclick="sel(this,'q14','D',[])"><span class="ol2">D</span>Me dejo llevar por la intuición y lo que veo en el momento</button>
+      <button class="ob" onclick="sel(this,'q14','E',[])"><span class="ol2">E</span>No sé cómo analizar — no tengo un método</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q14-next" onclick="go('q14','q15')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q15"><p class="qbtag">Bloque 5 · Plan y Metodología</p><p class="qnum">Pregunta 15 de 32</p>
+    <p class="qt">¿Has hecho backtesting de tu estrategia antes de operarla en vivo o en fondeo?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q15','A',[])"><span class="ol2">A</span>Sí — testeé mi estrategia en datos históricos con resultados documentados</button>
+      <button class="ob" onclick="sel(this,'q15','B',[])"><span class="ol2">B</span>He hecho algunas pruebas informales pero sin documentar</button>
+      <button class="ob" onclick="sel(this,'q15','C',[])"><span class="ol2">C</span>No he hecho backtesting — opero directo en vivo</button>
+      <button class="ob" onclick="sel(this,'q15','D',[])"><span class="ol2">D</span>No sé qué es el backtesting o cómo hacerlo</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q15-next" onclick="go('q15','q16')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q16"><p class="qbtag">Bloque 5 · Plan y Metodología</p><p class="qnum">Pregunta 16 de 32</p>
+    <p class="qt">¿Sabes en qué sesiones y horarios del mercado deberías operar según los activos que tradeas?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q16','A',[])"><span class="ol2">A</span>Sí — opero en los horarios correctos según cada activo y sesión</button>
+      <button class="ob" onclick="sel(this,'q16','B',[])"><span class="ol2">B</span>Lo sé pero a veces opero fuera de esos horarios</button>
+      <button class="ob" onclick="sel(this,'q16','C',[])"><span class="ol2">C</span>No tengo claro qué horarios son los mejores para cada activo</button>
+      <button class="ob" onclick="sel(this,'q16','D',[])"><span class="ol2">D</span>No sabía que las sesiones afectan los resultados</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q16-next" onclick="go('q16','q17')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q17"><p class="qbtag">Bloque 6 · Consistencia</p><p class="qnum">Pregunta 17 de 32</p>
+    <p class="qt">¿Llevas un registro o journal de tus operaciones?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q17','A',[])"><span class="ol2">A</span>Sí — registro todas mis operaciones con análisis posterior</button>
+      <button class="ob" onclick="sel(this,'q17','B',[])"><span class="ol2">B</span>A veces — cuando recuerdo o cuando algo sale muy mal</button>
+      <button class="ob" onclick="sel(this,'q17','C',[])"><span class="ol2">C</span>No llevo ningún registro</button>
+      <button class="ob" onclick="sel(this,'q17','D',[])"><span class="ol2">D</span>No sabía que eso era importante</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q17-next" onclick="go('q17','q18')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q18"><p class="qbtag">Bloque 7 · Disciplina y Mentalidad</p><p class="qnum">Pregunta 18 de 32</p>
+    <p class="qt">¿Cómo describes tu nivel de disciplina en áreas importantes de tu vida?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q18','A',[])"><span class="ol2">A</span>Soy muy constante — cuando me propongo algo, lo cumplo</button>
+      <button class="ob" onclick="sel(this,'q18','B',[])"><span class="ol2">B</span>Soy constante a ratos — depende de la motivación</button>
+      <button class="ob" onclick="sel(this,'q18','C',['q18c'])"><span class="ol2">C</span>Me cuesta mantener hábitos — empiezo fuerte y aflojo</button>
+      <button class="ob" onclick="sel(this,'q18','D',['q18c'])"><span class="ol2">D</span>Honestamente soy muy inconsistente</button>
+    </div>
+    <div class="cb" id="q18c"><p class="clbl">Pregunta directa</p><p class="cq">¿Qué te hace creer que el trading va a ser diferente?</p>
+      <textarea class="ta" id="q18ct" placeholder="Sé completamente honesto..." oninput="cta('q18ct','q18cc',30,'q18')"></textarea><p class="cc" id="q18cc">Mínimo 30 caracteres</p>
+    </div>
+    <div class="qnav"><button class="bn" id="q18-next" onclick="go('q18','q19')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q19"><p class="qbtag">Bloque 7 · Disciplina y Mentalidad</p><p class="qnum">Pregunta 19 de 32</p>
+    <p class="qt">¿Qué tan dispuesto estás a seguir un sistema al 100%, incluso en días que no da resultados inmediatos?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q19','A',[])"><span class="ol2">A</span>Completamente — entiendo que un sistema se respeta siempre</button>
+      <button class="ob" onclick="sel(this,'q19','B',[])"><span class="ol2">B</span>Mayormente, aunque reconozco que me cuesta sin resultados</button>
+      <button class="ob" onclick="sel(this,'q19','C',['q19c'])"><span class="ol2">C</span>Me costaría bastante — necesito ver resultados para mantenerme</button>
+      <button class="ob" onclick="sel(this,'q19','D',['q19c'])"><span class="ol2">D</span>No estoy seguro de poder hacerlo</button>
+    </div>
+    <div class="cb" id="q19c"><p class="clbl">Queremos entenderte</p><p class="cq">¿Qué necesitarías ver para confiar en un sistema que no creaste tú?</p>
+      <textarea class="ta" id="q19ct" placeholder="Tu respuesta..." oninput="cta('q19ct','q19cc',20,'q19')"></textarea><p class="cc" id="q19cc">Mínimo 20 caracteres</p>
+    </div>
+    <div class="qnav"><button class="bn" id="q19-next" onclick="go('q19','q20')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q20"><p class="qbtag">Bloque 7 · Disciplina</p><p class="qnum">Pregunta 20 de 32</p>
+    <p class="qt">¿Cuántas horas a la semana puedes dedicarle realmente al aprendizaje y práctica del trading?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q20','A',['q20c'])"><span class="ol2">A</span>Menos de 3 horas semanales</button>
+      <button class="ob" onclick="sel(this,'q20','B',[])"><span class="ol2">B</span>Entre 3 y 7 horas semanales</button>
+      <button class="ob" onclick="sel(this,'q20','C',[])"><span class="ol2">C</span>Entre 7 y 15 horas semanales</button>
+      <button class="ob" onclick="sel(this,'q20','D',[])"><span class="ol2">D</span>Más de 15 horas — es mi prioridad ahora mismo</button>
+    </div>
+    <div class="cb" id="q20c"><p class="clbl">Entendemos</p><p class="cq">¿Cuál es la razón principal?</p>
+      <div class="ol">
+        <button class="ob" onclick="sub(this,'q20')"><span class="ol2">A</span>Trabajo de tiempo completo y compromisos familiares</button>
+        <button class="ob" onclick="sub(this,'q20')"><span class="ol2">B</span>Trabajo pero podría reorganizar mis horas</button>
+        <button class="ob" onclick="sub(this,'q20')"><span class="ol2">C</span>Tengo tiempo libre pero otras cosas me consumen</button>
+        <button class="ob" onclick="sub(this,'q20')"><span class="ol2">D</span>Mi vida está en un período muy demandante</button>
+      </div>
+    </div>
+    <div class="qnav"><button class="bn" id="q20-next" onclick="go('q20','q21')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q21"><p class="qbtag">Bloque 7 · Mentalidad</p><p class="qnum">Pregunta 21 de 32</p>
+    <p class="qt">¿Has invertido antes en algún tipo de educación o formación?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q21','A',[])"><span class="ol2">A</span>Sí, lo veo como inversión y lo he hecho múltiples veces</button>
+      <button class="ob" onclick="sel(this,'q21','B',[])"><span class="ol2">B</span>Sí, pero me ha costado tomar la decisión cada vez</button>
+      <button class="ob" onclick="sel(this,'q21','C',['q21c'])"><span class="ol2">C</span>Muy pocas veces — generalmente busco aprender gratis</button>
+      <button class="ob" onclick="sel(this,'q21','D',['q21c'])"><span class="ol2">D</span>No, nunca he pagado por ninguna formación</button>
+    </div>
+    <div class="cb" id="q21c"><p class="clbl">Importante</p><p class="cq">¿Qué te haría cambiar esa mentalidad hacia invertir en tu educación?</p>
+      <textarea class="ta" id="q21ct" placeholder="Tu respuesta honesta..." oninput="cta('q21ct','q21cc',20,'q21')"></textarea><p class="cc" id="q21cc">Mínimo 20 caracteres</p>
+    </div>
+    <div class="qnav"><button class="bn" id="q21-next" onclick="go('q21','q22')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q22"><p class="qbtag">Bloque 8 · Objetivo y Motivación</p><p class="qnum">Pregunta 22 de 32</p>
+    <p class="qt">¿Por qué quieres aprender trading? Sé completamente honesto.</p><p class="mhint">Puedes marcar más de una</p>
+    <div class="ol">
+      <button class="ob multi" onclick="mul(this,'q22',null,[])"><span class="ol2">A</span>Quiero construir una fuente de ingresos adicional a largo plazo</button>
+      <button class="ob multi" onclick="mul(this,'q22',null,[])"><span class="ol2">B</span>Quiero vivir 100% del trading y retirarme de mi trabajo actual</button>
+      <button class="ob multi" data-val="C" onclick="mul(this,'q22','C',['q22c'])"><span class="ol2">C</span>Necesito dinero urgente y el trading me parece una opción rápida</button>
+      <button class="ob multi" onclick="mul(this,'q22',null,[])"><span class="ol2">D</span>Me apasiona el análisis de mercados y quiero desarrollar esa habilidad</button>
+      <button class="ob multi" onclick="mul(this,'q22',null,[])"><span class="ol2">E</span>Quiero diversificar mis activos y hacer crecer mi capital inteligentemente</button>
+    </div>
+    <div class="cb" id="q22c"><p class="clbl">Esto es clave</p><p class="cq">¿Qué tan urgente es esa necesidad de dinero ahora mismo?</p>
+      <div class="ol">
+        <button class="ob" onclick="sub(this,'q22'); setF('urgentMoney',true)"><span class="ol2">A</span>Es urgente — necesito resultados en las próximas semanas</button>
+        <button class="ob" onclick="sub(this,'q22'); setF('urgentMoney',false)"><span class="ol2">B</span>Es importante pero puedo esperar varios meses</button>
+        <button class="ob" onclick="sub(this,'q22'); setF('urgentMoney',false)"><span class="ol2">C</span>Es una motivación pero no es mi razón principal</button>
+      </div>
+    </div>
+    <div class="qnav"><button class="bn" id="q22-next" onclick="go('q22','q23')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q23"><p class="qbtag">Bloque 8 · Objetivo</p><p class="qnum">Pregunta 23 de 32</p>
+    <p class="qt">¿Cuál es tu objetivo real dentro del trading a 12 meses?</p>
+    <textarea class="ta" id="q23t" placeholder="Escribe tu visión concreta a 12 meses..." oninput="mta('q23t','q23c','q23-next',40)"></textarea>
+    <p class="cc" id="q23c">Mínimo 40 caracteres</p>
+    <div class="qnav"><button class="bn" id="q23-next" onclick="go('q23','q24')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q24"><p class="qbtag">Bloque 8 · Expectativas</p><p class="qnum">Pregunta 24 de 32</p>
+    <p class="qt">¿Entiendes que dominar el trading puede tomar entre 1 y 1 año y medio de trabajo serio? El menor tiempo en que un alumno logró retiros reales fue 6 meses — con dedicación full.</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q24','A',[])"><span class="ol2">A</span>Sí, lo entiendo y estoy dispuesto a recorrer ese camino</button>
+      <button class="ob" onclick="sel(this,'q24','B',[])"><span class="ol2">B</span>Lo entiendo pero esperaba que fuera más rápido</button>
+      <button class="ob" onclick="sel(this,'q24','C',['q24c'])"><span class="ol2">C</span>Pensaba que con un buen sistema los resultados llegarían antes</button>
+      <button class="ob" onclick="sel(this,'q24','D',['q24c'])"><span class="ol2">D</span>No lo sabía — eso cambia bastante mis expectativas</button>
+    </div>
+    <div class="cb" id="q24c"><p class="clbl">Ahora que lo sabes</p><p class="cq">¿Cómo afecta eso tu decisión de continuar?</p>
+      <div class="ol">
+        <button class="ob" onclick="sub(this,'q24')"><span class="ol2">A</span>No cambia nada — sigo dispuesto</button>
+        <button class="ob" onclick="sub(this,'q24')"><span class="ol2">B</span>Me hace reconsiderar si este es el momento adecuado</button>
+        <button class="ob" onclick="sub(this,'q24'); setF('wantsQuick',true)"><span class="ol2">C</span>Prefiero buscar algo que dé resultados más rápidos</button>
+      </div>
+    </div>
+    <div class="qnav"><button class="bn" id="q24-next" onclick="go('q24','q25')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q25"><p class="qbtag">Bloque 9 · Capacidad de Inversión</p><p class="qnum">Pregunta 25 de 32</p>
+    <p class="qt">¿Tienes deudas activas o compromisos financieros urgentes que dependan de ingresos que generes pronto?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q25','A',[])"><span class="ol2">A</span>No — mis finanzas están estables</button>
+      <button class="ob" onclick="sel(this,'q25','B',[])"><span class="ol2">B</span>Tengo algunas deudas pero controladas, sin presión inmediata</button>
+      <button class="ob" onclick="sel(this,'q25','C',['q25c'])"><span class="ol2">C</span>Sí, tengo deudas que me generan presión mensual</button>
+      <button class="ob" onclick="sel(this,'q25','D',['q25c'])"><span class="ol2">D</span>Estoy en una situación financiera crítica ahora mismo</button>
+    </div>
+    <div class="cb" id="q25c"><p class="clbl">Necesitamos ser directos</p><p class="cq">¿El dinero que invertirías en tu educación vendría de ese capital comprometido?</p>
+      <div class="ol">
+        <button class="ob" onclick="sub(this,'q25')"><span class="ol2">A</span>No — tengo capital separado que no afecta mis compromisos</button>
+        <button class="ob" onclick="sub(this,'q25'); setF('compromisedCapital',true)"><span class="ol2">B</span>Sí — sería del mismo dinero que necesito para otras cosas</button>
+      </div>
+    </div>
+    <div class="qnav"><button class="bn" id="q25-next" onclick="go('q25','q26')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q26"><p class="qbtag">Bloque 9 · Capacidad de Inversión</p><p class="qnum">Pregunta 26 de 32</p>
+    <p class="qt">¿Qué tan claro tienes que cualquier profesión seria requiere una inversión en educación para desarrollarla correctamente?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q26','A',[])"><span class="ol2">A</span>Completamente claro — igual que un médico, abogado o ingeniero</button>
+      <button class="ob" onclick="sel(this,'q26','B',[])"><span class="ol2">B</span>Lo entiendo pero sigo sintiendo resistencia a pagar por esto</button>
+      <button class="ob" onclick="sel(this,'q26','C',['q26c'])"><span class="ol2">C</span>No lo termino de ver así — creo que se puede aprender gratis</button>
+      <button class="ob" onclick="sel(this,'q26','D',[])"><span class="ol2">D</span>No lo había pensado desde ese ángulo</button>
+    </div>
+    <div class="cb" id="q26c"><p class="clbl">Reflexión</p><p class="cq">¿Cuánto tiempo llevas intentando aprender gratis y cuáles han sido tus resultados?</p>
+      <textarea class="ta" id="q26ct" placeholder="Tu respuesta..." oninput="cta('q26ct','q26cc',20,'q26')"></textarea><p class="cc" id="q26cc">Mínimo 20 caracteres</p>
+    </div>
+    <div class="qnav"><button class="bn" id="q26-next" onclick="go('q26','q27')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q27"><p class="qbtag">Bloque 9 · Capacidad de Inversión</p><p class="qnum">Pregunta 27 de 32 · Pregunta clave</p>
+    <p class="qt">¿Cuánto capital tienes disponible para invertir en tu educación como trader, sabiendo que el objetivo es que llegues a retirar dinero del mercado con un sistema comprobado?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q27','A',[]); setF('capital','zero')"><span class="ol2">A</span>De $0 a $50</button>
+      <button class="ob" onclick="sel(this,'q27','B',[]); setF('capital','princes')"><span class="ol2">B</span>De $50 a $100</button>
+      <button class="ob" onclick="sel(this,'q27','C',[]); setF('capital','mid')"><span class="ol2">C</span>De $100 a $300</button>
+      <button class="ob" onclick="sel(this,'q27','D',[]); setF('capital','mentoria')"><span class="ol2">D</span>De $300 a $500 o más</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q27-next" onclick="go('q27','q28')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q28"><p class="qbtag">Bloque 10 · Cierre</p><p class="qnum">Pregunta 28 de 32</p>
+    <p class="qt">¿Tienes actualmente alguna metodología o sistema con el que estés operando o estudiando?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q28','A',['q28c'])"><span class="ol2">A</span>Sí, tengo una metodología definida y la aplico con disciplina</button>
+      <button class="ob" onclick="sel(this,'q28','B',[])"><span class="ol2">B</span>Tengo algo pero no es consistente ni está del todo claro</button>
+      <button class="ob" onclick="sel(this,'q28','C',[])"><span class="ol2">C</span>He probado cosas sueltas pero sin sistema real</button>
+      <button class="ob" onclick="sel(this,'q28','D',[])"><span class="ol2">D</span>No, voy a ciegas o siguiendo lo que veo en redes</button>
+    </div>
+    <div class="cb" id="q28c"><p class="clbl">Sobre tu metodología</p><p class="cq">¿Qué te está faltando que te llevó a buscar orientación?</p>
+      <textarea class="ta" id="q28ct" placeholder="Sé específico..." oninput="cta('q28ct','q28cc',20,'q28')"></textarea><p class="cc" id="q28cc">Mínimo 20 caracteres</p>
+    </div>
+    <div class="qnav"><button class="bn" id="q28-next" onclick="go('q28','q29')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q29"><p class="qbtag">Bloque 10 · Cierre</p><p class="qnum">Pregunta 29 de 32</p>
+    <p class="qt">¿Has seguido a algún trader o mentor antes? ¿Cómo fue esa experiencia?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q29','A',[])"><span class="ol2">A</span>Sí, fue positiva y me aportó valor real</button>
+      <button class="ob" onclick="sel(this,'q29','B',['q29c'])"><span class="ol2">B</span>Sí, pero no obtuve los resultados que esperaba</button>
+      <button class="ob" onclick="sel(this,'q29','C',['q29c'])"><span class="ol2">C</span>Sí, fue una experiencia negativa o me estafaron</button>
+      <button class="ob" onclick="sel(this,'q29','D',[])"><span class="ol2">D</span>No, nunca he seguido a ningún mentor</button>
+    </div>
+    <div class="cb" id="q29c"><p class="clbl">Cuéntanos</p><p class="cq">¿Qué fue lo que falló en esa experiencia?</p>
+      <textarea class="ta" id="q29ct" placeholder="Esto nos ayuda a entenderte mejor..." oninput="cta('q29ct','q29cc',20,'q29')"></textarea><p class="cc" id="q29cc">Mínimo 20 caracteres</p>
+    </div>
+    <div class="qnav"><button class="bn" id="q29-next" onclick="go('q29','q30')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q30"><p class="qbtag">Bloque 10 · Compromiso</p><p class="qnum">Pregunta 30 de 32</p>
+    <p class="qnote">💡 ¿Sabías que Williams está dispuesto a regalarte una cuenta de fondeo de <strong>$12,000</strong> al finalizar tu proceso educativo con él?</p>
+    <p class="qt">Si al completar el programa recibieras esa cuenta de $12,000 lista para operar, ¿qué harías con ella?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q30','A',[])"><span class="ol2">A</span>La operaría con el sistema aprendido, con disciplina y paciencia</button>
+      <button class="ob" onclick="sel(this,'q30','B',[])"><span class="ol2">B</span>Intentaría recuperar todo lo que he perdido lo más rápido posible</button>
+      <button class="ob" onclick="sel(this,'q30','C',[])"><span class="ol2">C</span>La operaría con cuidado pero sin saber muy bien cómo usarla</button>
+      <button class="ob" onclick="sel(this,'q30','D',[])"><span class="ol2">D</span>Aún no me siento listo para manejar ese capital</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q30-next" onclick="go('q30','q31')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q31"><p class="qbtag">Bloque 10 · Cierre</p><p class="qnum">Pregunta 31 de 32</p>
+    <p class="qt">¿Cómo encontraste a Williams Ramos o a Trading Pro Lab?</p>
+    <div class="ol">
+      <button class="ob" onclick="sel(this,'q31','A',[])"><span class="ol2">A</span>Instagram</button>
+      <button class="ob" onclick="sel(this,'q31','B',[])"><span class="ol2">B</span>TikTok</button>
+      <button class="ob" onclick="sel(this,'q31','C',[])"><span class="ol2">C</span>Facebook</button>
+      <button class="ob" onclick="sel(this,'q31','D',[])"><span class="ol2">D</span>Me lo recomendó alguien</button>
+      <button class="ob" onclick="sel(this,'q31','E',[])"><span class="ol2">E</span>YouTube u otro video</button>
+      <button class="ob" onclick="sel(this,'q31','F',[])"><span class="ol2">F</span>Otro medio</button>
+    </div>
+    <div class="qnav"><button class="bn" id="q31-next" onclick="go('q31','q32')">Siguiente →</button></div>
+  </div>
+
+  <div class="qc" id="q32"><p class="qbtag">Bloque 10 · Cierre y Compromiso</p><p class="qnum">Última pregunta · 32 de 32</p>
+    <p class="qt">Por último — ¿por qué crees que mereces ser aceptado en el programa de Trading Pro Lab?</p>
+    <textarea class="ta" id="q32t" style="min-height:150px" placeholder="Esta es la pregunta más importante. Escribe con honestidad y sin filtros..." oninput="mta('q32t','q32c','q32-next',50)"></textarea>
+    <p class="cc" id="q32c">Mínimo 50 caracteres</p>
+    <div class="qnav"><button class="bn" id="q32-next" onclick="showResult()" style="font-size:14px;padding:16px 36px">Ver mi diagnóstico →</button></div>
+  </div>
+
+</div>
+</section>
+
+<section id="rs">
+<div class="rwrap">
+  <div class="logo" style="text-align:left;margin-bottom:40px">TRADING <span>PRO</span> LAB</div>
+  <div id="RH"></div>
+  <div class="mpanel"><p class="ptit">Estadísticas de tu perfil como trader — 8 áreas</p><div id="MR"></div></div>
+  <div id="PB"></div>
+  <div id="RM"></div>
+  <div id="RD"></div>
+  <div id="CB"></div>
+  <div class="rnote"><button class="rbtn" onclick="restart()">Volver a hacer el diagnóstico</button></div>
+</div>
+</section>
+
+<script>
+const A={},F={urgentMoney:false,wantsQuick:false,compromisedCapital:false,capital:null};
+const done=new Set();const TOTAL=32;
+function setF(k,v){F[k]=v;}
+function upP(){const p=Math.round(done.size/TOTAL*100);document.getElementById('pf').style.width=p+'%';document.getElementById('pct').textContent=p+'%';}
+function startQ(){document.getElementById('hero').style.display='none';document.getElementById('qs').style.display='block';window.scrollTo(0,0);}
+function go(c,n){document.getElementById(c).classList.remove('active');document.getElementById(n).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function en(q){const b=document.getElementById(q+'-next');if(b)b.classList.add('on');}
+function sel(btn,q,v,conds){
+  const card=document.getElementById(q);
+  card.querySelectorAll(':scope>.ol>.ob').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');A[q]=v;done.add(q);
+  card.querySelectorAll(':scope>.cb').forEach(c=>c.classList.remove('vis'));
+  conds.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('vis');});
+  const needsTA=conds.some(id=>{const el=document.getElementById(id);return el&&el.querySelector('textarea');});
+  if(!needsTA)en(q);else{const nb=document.getElementById(q+'-next');if(nb)nb.classList.remove('on');}
+  upP();
+}
+function mul(btn,q,trigVal,conds){
+  btn.classList.toggle('sel');
+  if(!A[q])A[q]=[];
+  const lbl=btn.querySelector('.ol2').textContent;
+  if(btn.classList.contains('sel')){if(!A[q].includes(lbl))A[q].push(lbl);}
+  else{A[q]=A[q].filter(v=>v!==lbl);}
+  if(trigVal&&conds.length){
+    const card=document.getElementById(q);
+    const trig=card&&Array.from(card.querySelectorAll('.ob.multi')).some(b=>b.dataset.val===trigVal&&b.classList.contains('sel'));
+    conds.forEach(id=>{const el=document.getElementById(id);if(el){if(trig)el.classList.add('vis');else el.classList.remove('vis');}});
+  }
+  done.add(q);
+  const card=document.getElementById(q);
+  const any=card&&card.querySelectorAll(':scope>.ol>.ob.sel').length>0;
+  if(any)en(q);else{const nb=document.getElementById(q+'-next');if(nb)nb.classList.remove('on');}
+  upP();
+}
+function sub(btn,q){
+  const p=btn.closest('.cb');
+  if(p)p.querySelectorAll('.ob').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');en(q);
+}
+function mta(tid,cid,nextId,min){
+  const v=document.getElementById(tid).value.trim();
+  const c=document.getElementById(cid),n=document.getElementById(nextId);
+  c.textContent=v.length>=min?'✓ Listo':'Mínimo '+min+' caracteres ('+v.length+'/'+min+')';
+  c.className='cc'+(v.length>=min?' ok':'');
+  if(v.length>=min){n.classList.add('on');}else n.classList.remove('on');
+}
+function cta(tid,cid,min,q){
+  const v=document.getElementById(tid).value.trim();
+  const c=document.getElementById(cid);
+  c.textContent=v.length>=min?'✓ Listo':'Mínimo '+min+' caracteres ('+v.length+'/'+min+')';
+  c.className='cc'+(v.length>=min?' ok':'');
+  if(v.length>=min){en(q);done.add(q);upP();}
+}
+function calcS(){
+  const s={psicologia:0,riesgo:0,fondeo:0,plan:0,consistencia:0,disciplina:0,mentalidad:0,ejecucion:0};
+  if(A.q5==='A')s.psicologia+=30;else if(A.q5==='B')s.psicologia+=15;
+  if(['A','B'].includes(A.q6))s.psicologia+=35;else if(['C','D','E'].includes(A.q6))s.psicologia+=5;
+  if(A.q7==='A')s.psicologia+=35;else if(A.q7==='B')s.psicologia+=18;else if(['C','D','E'].includes(A.q7))s.psicologia+=5;
+  if(A.q8==='A')s.riesgo+=35;else if(A.q8==='B')s.riesgo+=18;
+  if(A.q9==='A')s.riesgo+=35;else if(A.q9==='B')s.riesgo+=15;
+  if(A.q10==='A')s.riesgo+=30;else if(A.q10==='B')s.riesgo+=15;else if(A.q10==='C')s.riesgo+=5;
+  if(A.q11==='A')s.fondeo+=40;else if(A.q11==='B')s.fondeo+=20;else if(A.q11==='C')s.fondeo+=8;
+  if(A.q12==='A')s.fondeo+=40;else if(A.q12==='B')s.fondeo+=20;else if(A.q12==='C')s.fondeo+=8;
+  const q2v=A.q2||[];if(q2v.includes('C'))s.fondeo+=20;
+  if(A.q13==='A')s.plan+=30;else if(A.q13==='B')s.plan+=12;
+  if(A.q14==='A')s.plan+=30;else if(A.q14==='B')s.plan+=12;
+  if(A.q15==='A')s.plan+=25;else if(A.q15==='B')s.plan+=10;
+  if(A.q16==='A')s.plan+=15;else if(A.q16==='B')s.plan+=8;
+  if(A.q17==='A')s.consistencia+=40;else if(A.q17==='B')s.consistencia+=15;
+  if(A.q28==='A')s.consistencia+=35;else if(A.q28==='B')s.consistencia+=15;
+  if(A.q20==='C'||A.q20==='D')s.consistencia+=25;else if(A.q20==='B')s.consistencia+=12;
+  if(A.q18==='A')s.disciplina+=35;else if(A.q18==='B')s.disciplina+=18;
+  if(A.q19==='A')s.disciplina+=35;else if(A.q19==='B')s.disciplina+=18;
+  if(A.q20==='D')s.disciplina+=30;else if(A.q20==='C')s.disciplina+=18;else if(A.q20==='B')s.disciplina+=8;
+  if(A.q24==='A')s.mentalidad+=25;else if(A.q24==='B')s.mentalidad+=10;
+  if(!F.urgentMoney)s.mentalidad+=25;
+  if(A.q26==='A')s.mentalidad+=25;else if(A.q26==='B')s.mentalidad+=10;
+  if(A.q21==='A')s.mentalidad+=25;else if(A.q21==='B')s.mentalidad+=12;
+  if(A.q14==='A')s.ejecucion+=30;else if(A.q14==='B')s.ejecucion+=12;
+  if(A.q28==='A')s.ejecucion+=30;else if(A.q28==='B')s.ejecucion+=12;
+  const q23l=(document.getElementById('q23t')||{value:''}).value.trim().length;
+  if(q23l>=80)s.ejecucion+=20;else if(q23l>=40)s.ejecucion+=10;
+  if(A.q3==='C'||A.q3==='D')s.ejecucion+=20;else if(A.q3==='B')s.ejecucion+=8;
+  Object.keys(s).forEach(k=>{s[k]=Math.min(100,s[k]);});
+  return s;
+}
+function getProfile(s){
+  const bad=[F.urgentMoney,F.wantsQuick,F.compromisedCapital].filter(Boolean).length;
+  if(F.capital==='zero'||bad>=2||(F.urgentMoney&&F.capital!=='mentoria'))return 'red';
+  if(F.capital==='mentoria')return 'green';
+  if(F.capital==='mid'){const avg=Object.values(s).reduce((a,b)=>a+b,0)/8;return avg>=52?'green':'yellow';}
+  return 'yellow';
+}
+function getType(){
+  const lvl=A.q3,t=A.q1,sys=A.q28;
+  if(t==='A'||lvl==='A')return 1;
+  if(['B','C'].includes(A.q29)&&lvl!=='D')return 2;
+  if(lvl==='C'&&sys!=='A')return 3;
+  if(lvl==='D'&&sys==='A')return 4;
+  return 3;
+}
+function getPain(s){
+  const pain=[];
+  if(['C','D','E'].includes(A.q5))pain.push({l:'Control emocional — manejo del stop loss',d:'Mueves el stop o cierras anticipado por miedo. La emoción está superando al sistema.',fix:'Fase 3 (Ejecución) · Control emocional y disciplina operativa del Sistema TPL'});
+  if(['C','D','E'].includes(A.q6))pain.push({l:'Revenge trading y sobreoperar tras pérdidas',d:'Abres más operaciones o aumentas el tamaño para recuperar. Eso quema cuentas en días.',fix:'Fase 4 (Corrección) · Protocolo post-pérdida del Sistema TPL'});
+  if(['C','D','E'].includes(A.q7))pain.push({l:'Resiliencia ante rachas negativas',d:'Las malas semanas alteran tu forma de operar. La impulsividad destruye la consistencia.',fix:'Fase 4 (Corrección) · Gestión de rachas y mindset de largo plazo'});
+  if(['C','D'].includes(A.q8))pain.push({l:'Gestión de riesgo por operación — regla fija',d:'Sin una regla fija de riesgo que respetes siempre, cada trade es una apuesta.',fix:'Fase 2 (Ruta) · Módulo de gestión de riesgo y cálculo de exposición del Sistema TPL'});
+  if(['C','D'].includes(A.q9))pain.push({l:'Cálculo de tamaño de posición (lotes)',d:'Usar siempre el mismo lote sin calcularlo ignora tu capital y tu stop. Riesgo aleatorio en cada entrada.',fix:'Fase 2 (Ruta) · Módulo de sizing y calculadora de lotes'});
+  if(['C','D'].includes(A.q10))pain.push({l:'Comprensión y gestión del apalancamiento',d:'Sin entender el apalancamiento, no puedes medir tu riesgo real. Puedes perder mucho más de lo que crees.',fix:'Fase 2 (Ruta) · Fundamentos de capital y apalancamiento'});
+  if(['C','D'].includes(A.q11))pain.push({l:'Reglas de cuentas de fondeo (drawdown y profit target)',d:'Operar en prop firms sin conocer sus reglas es la razón #1 por la que se pierden esas cuentas.',fix:'Fase 3 (Ejecución) · Módulo completo de fondeo y prop firms del Sistema TPL'});
+  if(['C','D'].includes(A.q12))pain.push({l:'Proceso de payout en cuentas de fondeo',d:'No tener claro cómo llegar al payout sin romper reglas genera presión y errores evitables.',fix:'Fase 3 (Ejecución) · Protocolo de operación en fondeo y gestión de payouts'});
+  if(['C','D'].includes(A.q13))pain.push({l:'Plan de trading definido y escrito',d:'Sin un plan escrito con reglas claras, cada sesión es diferente. No puedes mejorar algo que no está definido.',fix:'Fase 2 (Ruta) · Construcción del plan de trading personalizado en el Sistema TPL'});
+  if(['C','D','E'].includes(A.q14))pain.push({l:'Metodología de análisis de mercado',d:'Operar por señales, intuición o sin método significa que no puedes replicar lo que funciona ni corregir lo que falla.',fix:'Fase 2 (Ruta) · Metodología completa de análisis del Sistema TPL'});
+  if(['C','D'].includes(A.q15))pain.push({l:'Backtesting — validar estrategia antes de operar en vivo',d:'Operar sin testear es operar a ciegas. Sin datos históricos no sabes si tu estrategia realmente funciona.',fix:'Fase 2 (Ruta) · Módulo de backtesting y validación de estrategias'});
+  if(['C','D'].includes(A.q16))pain.push({l:'Sesiones de mercado y horarios correctos por activo',d:'Operar en los horarios equivocados genera spreads altos, movimientos falsos y resultados erráticos.',fix:'Fase 2 (Ruta) · Módulo de sesiones y activos del Sistema TPL'});
+  if(['B','C','D'].includes(A.q17))pain.push({l:'Registro y journal de operaciones',d:'Sin journal no puedes identificar qué falla ni qué funciona. Estás repitiendo errores sin saberlo.',fix:'Fase 3 (Ejecución) · Sistema de journal y seguimiento del Sistema TPL'});
+  if(['C','D'].includes(A.q18))pain.push({l:'Consistencia y hábitos diarios',d:'La disciplina cotidiana es más importante que cualquier estrategia. Sin ella, el mejor sistema no sirve.',fix:'Fase 3 (Ejecución) · Protocolo de rutinas y hábitos operativos'});
+  if(A.q30==='B')pain.push({l:'Manejo de capital bajo presión — cuenta de fondeo $12k',d:'Querer recuperar pérdidas rápido con $12,000 es exactamente lo que quema esas cuentas en semanas.',fix:'Fase 4 (Corrección) · Control de expectativas y gestión de cuentas fondeadas'});
+  return pain.slice(0,8);
+}
+function buildMsg(profile,s,pain,type){
+  const tn={1:'El Perdido',2:'El Quemado',3:'El Círculo',4:'El Técnico'};
+  const pn={red:'No apto en este momento',yellow:'El Camino del Príncipe',green:'El Camino del Rey'};
+  const cm={zero:'$0-$50',princes:'$50-$100',mid:'$100-$300',mentoria:'$300-$500+'};
+  const sl=Object.entries({'Psicología':s.psicologia,'Gestión de Riesgo':s.riesgo,'Fondeo / Prop Firms':s.fondeo,'Plan y Metodología':s.plan,'Consistencia':s.consistencia,'Disciplina':s.disciplina,'Mentalidad':s.mentalidad,'Análisis y Ejecución':s.ejecucion}).map(([k,v])=>'  • '+k+': '+v+'/100').join('\n');
+  const pl=pain.length?pain.map(p=>'  ⚠️ '+p.l+'\n     → '+p.fix).join('\n'):'  Sin puntos críticos detectados';
+  const q23=(document.getElementById('q23t')||{value:''}).value.trim()||'No especificó';
+  const q32=(document.getElementById('q32t')||{value:''}).value.trim()||'No especificó';
+  const msg='🔎 *DIAGNÓSTICO TPL — RESULTADO COMPLETO*\n\n'+
+    '*Perfil:* '+pn[profile]+'\n*Tipo de trader:* '+(tn[type]||'El Círculo')+'\n'+
+    '*Capital para educación:* '+(cm[F.capital]||'No indicado')+'\n'+
+    '*Fuente de llegada:* '+(A.q31||'—')+'\n\n'+
+    '📊 *ESTADÍSTICAS DEL PERFIL (8 áreas):*\n'+sl+'\n\n'+
+    '⚠️ *PUNTOS CLAVE A TRABAJAR + SOLUCIÓN EN TPL:*\n'+pl+'\n\n'+
+    '🎯 *OBJETIVO A 12 MESES:*\n  '+q23+'\n\n'+
+    '💬 *POR QUÉ QUIERE SER ACEPTADO:*\n  '+q32+'\n\n'+
+    '📋 *DATOS DEL PERFIL:*\n'+
+    '  • Tiempo en trading: '+(A.q1||'—')+'\n'+
+    '  • Nivel auto-declarado: '+(A.q3||'—')+'\n'+
+    '  • Capital perdido: '+(A.q4||'—')+'\n'+
+    '  • Stop loss / control emocional: '+(A.q5||'—')+'\n'+
+    '  • Post-pérdida / revenge: '+(A.q6||'—')+'\n'+
+    '  • Rachas negativas — reacción: '+(A.q7||'—')+'\n'+
+    '  • Regla de riesgo por trade: '+(A.q8||'—')+'\n'+
+    '  • Cálculo de lotes: '+(A.q9||'—')+'\n'+
+    '  • Apalancamiento: '+(A.q10||'—')+'\n'+
+    '  • Reglas de fondeo: '+(A.q11||'—')+'\n'+
+    '  • Proceso de payout: '+(A.q12||'—')+'\n'+
+    '  • Plan de trading escrito: '+(A.q13||'—')+'\n'+
+    '  • Método de análisis: '+(A.q14||'—')+'\n'+
+    '  • Backtesting: '+(A.q15||'—')+'\n'+
+    '  • Sesiones y horarios: '+(A.q16||'—')+'\n'+
+    '  • Journal: '+(A.q17||'—')+'\n'+
+    '  • Horas semanales: '+(A.q20||'—')+'\n'+
+    '  • Experiencia mentores: '+(A.q29||'—')+'\n'+
+    '  • Fondeo $12k — respuesta: '+(A.q30||'—')+'\n'+
+    '  • 🚨 Dinero urgente: '+(F.urgentMoney?'SÍ':'No')+'\n'+
+    '  • 🚨 Capital comprometido: '+(F.compromisedCapital?'SÍ':'No')+'\n\n'+
+    '📲 Diagnóstico enviado desde landing Trading Pro Lab.';
+  return encodeURIComponent(msg);
+}
+function showResult(){
+  document.getElementById('qs').style.display='none';
+  document.getElementById('rs').style.display='block';
+  window.scrollTo(0,0);
+  const s=calcS(),p=getProfile(s),type=getType(),pain=getPain(s);
+  const ap={1:0,2:0,3:2,4:2}[type]??0;
+  rH(p);rM(s,p);rP(pain,p);rMsg(p);
+  if(p!=='red')rRoad(ap,type);
+  rCTA(p,s,pain,type);
+  setTimeout(()=>{document.querySelectorAll('.mf').forEach(el=>{el.style.width=el.dataset.t+'%';});},300);
+}
+function rH(p){
+  const c={red:{t:'RESULTADO',b:'No apto en este momento',bc:'red',tc:'red'},yellow:{t:'DIAGNÓSTICO',b:'Perfil: El Camino del Príncipe',bc:'yel',tc:'yel'},green:{t:'DIAGNÓSTICO',b:'Perfil: El Camino del Rey',bc:'grn',tc:'grn'}}[p];
+  document.getElementById('RH').innerHTML='<p class="rey">Trading Pro Lab · Tu resultado</p><h2 class="rtit '+c.tc+'">'+c.t+'</h2><span class="rbadge '+c.bc+'">'+c.b+'</span>';
+}
+function rM(s,p){
+  const metrics=[{k:'psicologia',l:'Psicología y Control Emocional'},{k:'riesgo',l:'Gestión de Riesgo y Capital'},{k:'fondeo',l:'Fondeo / Prop Firms'},{k:'plan',l:'Plan y Metodología'},{k:'consistencia',l:'Consistencia'},{k:'disciplina',l:'Disciplina'},{k:'mentalidad',l:'Mentalidad'},{k:'ejecucion',l:'Análisis y Ejecución'}];
+  const fc=p==='red'?'rd':p==='yellow'?'yl':'or';
+  document.getElementById('MR').innerHTML=metrics.map(x=>{const v=s[x.k];return '<div class="mr"><div class="mh"><span class="mn">'+x.l+'</span><span class="ms">'+v+'<span style="font-size:12px;color:var(--g)">/100</span></span></div><div class="mtr"><div class="mf '+fc+'" data-t="'+v+'" style="width:0%"></div></div></div>';}).join('');
+}
+function rP(pain,p){
+  if(!pain.length){document.getElementById('PB').innerHTML='';return;}
+  document.getElementById('PB').innerHTML='<div class="ppanel"><p class="ptit">Puntos clave a trabajar — y qué los resuelve en el Sistema TPL</p>'+pain.map(x=>'<div class="pi"><div class="pd'+(p==='red'?' r':'')+'"></div><div class="ptxt"><strong>'+x.l+'</strong>'+x.d+'<div class="fix">✦ '+x.fix+'</div></div></div>').join('')+'</div>';
+}
+function rMsg(p){
+  const msgs={
+    red:'<p>Quizás en este momento tu perspectiva con el trading no es la correcta a la que el Sistema TPL está dispuesto a poder funcionar, ya que he detectado que andas en búsqueda del dinero rápido — y el trading, como cualquier negocio, no te puede dar mucho dinero sin mucho dinero.</p><p>Recuerda que el retorno en el trading es consecuente a cuánto capital puedes llegar a tener en tu portafolio. El trading no es un atajo, y entrar antes de estar listo solo aumenta el riesgo de pérdida — y ese no es el objetivo de TPL.</p><p>Cuando tu situación y comprensión profesional del trading cambie, este diagnóstico sigue disponible.</p>',
+    yellow:'<p>Tu perfil muestra un equilibrio sólido entre curiosidad real y disposición a trabajar el proceso. No estás aquí buscando un milagro — estás buscando una dirección. Eso ya te pone por encima del 80% de las personas que llegan al trading.</p><p>El Sistema TPL analizó tus respuestas y determinó que el punto de partida correcto para ti es <strong style="color:var(--w)">El Camino del Príncipe</strong>. No es el camino más corto. Es el camino más honesto: aprendes el sistema, lo aplicas con acompañamiento, corriges en tiempo real y construyes consistencia desde la raíz.</p><p><strong style="color:var(--w)">Ya se te ha armado el GPS de la ruta y la estructura del sistema que te haría mejorar tu trading con el seguimiento y las correcciones correctas. Ahora, TPL es tu siguiente paso.</strong></p>',
+    green:'<p>Lo que más me interesa de tu perfil no es solo lo que sabes. Es cómo piensas.</p><p>Tienes autoconciencia. Tienes compromiso. Y sobre todo, tienes claro que el trading no es un juego — es una profesión que se construye con un sistema, con corrección real y con seguimiento constante.</p><p>Eso es exactamente el tipo de perfil para el que existe <strong style="color:var(--w)">El Camino del Rey</strong>. Lo que vas a encontrar aquí no es un curso con clases grabadas que consumes a tu ritmo y ya. Es un sistema vivo: yo reviso tus operaciones directamente, identificamos juntos tus errores específicos, y ajustamos tu ruta cada vez que el mercado o tú cambian.</p><p><strong style="color:var(--w)">Ya se te ha armado el GPS de la ruta y la estructura del sistema que te haría mejorar tu trading con el seguimiento y las correcciones correctas. Ahora, TPL es tu siguiente paso.</strong></p>'
+  };
+  document.getElementById('RM').innerHTML='<div class="rmsg">'+msgs[p]+'</div>';
+}
+function rRoad(ap,type){
+  const tn={1:'El Perdido',2:'El Quemado',3:'El Círculo',4:'El Técnico'};
+  const ph=[{n:'01',name:'Diagnóstico',q:'¿Dónde estás parado?',r:'Ya sé quién soy como trader'},{n:'02',name:'Ruta',q:'¿Qué debo hacer exactamente?',r:'Sé cuál es mi siguiente paso'},{n:'03',name:'Ejecución',q:'¿Lo estoy haciendo?',r:'Tengo un proceso. No improviso más'},{n:'04',name:'Corrección',q:'¿Qué debo mejorar?',r:'Sé exactamente por qué fallo'},{n:'05',name:'Recalculando',q:'¿Qué sigue ahora?',r:'Siempre sé cuál es mi siguiente paso'}];
+  const cards=ph.map((p,i)=>'<div class="ph '+(i<ap?'dn':i===ap?'act':'')+'"><div class="phn">'+p.n+'</div><div class="phname">'+p.name+'</div><div class="phq">'+p.q+'</div><div class="phr">'+p.r+'</div></div>').join('');
+  document.getElementById('RD').innerHTML='<div class="rdsec"><p class="rdtit">Tu GPS · Sistema TPL</p><div class="rdph">'+cards+'</div><div class="apnote"><div class="adot"></div>Punto de entrada: <strong style="color:var(--or);margin-left:4px">Fase '+(ap+1)+' · '+ph[ap].name+'</strong>&nbsp;·&nbsp;Perfil: <em style="color:var(--gl);margin-left:4px">'+(tn[type]||'El Círculo')+'</em></div></div>';
+}
+function rCTA(p,s,pain,type){
+  if(p==='red'){document.getElementById('CB').innerHTML='<div class="ctab" style="border-color:rgba(224,60,60,.3)"><p class="cph" style="color:var(--gl)">El diagnóstico siempre estará disponible.</p><p class="csub">Cuando tu situación y perspectiva cambien, vuelve y empieza de nuevo.</p><div class="ctabs"><button class="bo" onclick="restart()">Volver al inicio</button></div></div>';return;}
+  const waUrl='https://wa.me/50371179235?text='+buildMsg(p,s,pain,type);
+  const pl=p==='green'?'El Camino del Rey':'El Camino del Príncipe';
+  const phrase=p==='green'?'El siguiente paso no es un módulo.<br><span>Eres tú y yo, revisando juntos dónde estás y qué sigue.</span>':'Ya tienes el diagnóstico.<br><span>Ahora tienes que decidir si lo usas.</span>';
+  const csub=p==='green'?'Felicidades — tu perfil cumple con las características que el Sistema TPL necesita para aportarte valor real. Los puntos detectados en tu diagnóstico tienen solución directa dentro del sistema. <strong>Envíale tu diagnóstico completo a Williams para comenzar la conversación.</strong>':'Felicidades — tu perfil está equilibrado y el Sistema TPL tiene una ruta clara para trabajar cada punto detectado. <strong>Envíale tu diagnóstico a Williams para dar el primer paso.</strong>';
+  document.getElementById('CB').innerHTML='<div class="ctab"><p class="ctag">✦ Diagnóstico completado · Perfil apto: '+pl+'</p><p class="cph">'+phrase+'</p><p class="csub">'+csub+'</p><div class="ctabs"><a class="bwa" href="'+waUrl+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>Enviar diagnóstico a Williams</a></div></div>';
+}
+function restart(){
+  Object.keys(A).forEach(k=>delete A[k]);
+  F.urgentMoney=false;F.wantsQuick=false;F.compromisedCapital=false;F.capital=null;done.clear();
+  document.querySelectorAll('.qc').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.ob').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.cb').forEach(c=>c.classList.remove('vis'));
+  document.querySelectorAll('textarea').forEach(t=>t.value='');
+  document.getElementById('q1').classList.add('active');
+  document.getElementById('pf').style.width='0%';
+  document.getElementById('pct').textContent='0%';
+  document.getElementById('rs').style.display='none';
+  document.getElementById('qs').style.display='block';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
